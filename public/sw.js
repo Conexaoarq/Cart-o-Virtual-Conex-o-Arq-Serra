@@ -1,4 +1,4 @@
-const CACHE_NAME = 'conexao-arq-v1';
+const CACHE_NAME = 'conexao-arq-v2';
 const ASSETS = [
     '/card.html',
     '/manifest.json',
