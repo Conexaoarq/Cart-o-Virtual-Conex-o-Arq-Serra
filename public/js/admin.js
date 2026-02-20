@@ -2,6 +2,19 @@
 let allMembers = [];
 let editingId = null;
 
+// Preenche o select de anos dinamicamente
+function populateYears() {
+    const sel = document.getElementById('f-validade-ano');
+    if (!sel) return;
+    const now = new Date().getFullYear();
+    for (let y = now; y <= now + 10; y++) {
+        const opt = document.createElement('option');
+        opt.value = String(y);
+        opt.textContent = String(y);
+        sel.appendChild(opt);
+    }
+}
+
 // ── Load members ──────────────────────────────────────────────────
 async function loadMembers() {
     try {
@@ -34,11 +47,7 @@ function renderTable(members) {
     <tr>
       <td>
         <div class="member-cell">
-          <div class="member-avatar">
-            ${m.photo
-            ? `<img src="${m.photo}" alt="${m.nome}" onerror="this.parentElement.innerHTML='👤'">`
-            : '👤'}
-          </div>
+          <div class="member-avatar">👤</div>
           <div>
             <div class="member-name-cell">${m.nome}</div>
             <div class="member-id-cell">${m.email || '—'}</div>
@@ -113,12 +122,13 @@ function openModal() {
     document.getElementById('save-btn-text').textContent = 'Salvar Filiado';
     document.getElementById('edit-id').value = '';
     document.getElementById('f-nome').value = '';
-    document.getElementById('f-cpf').value = '';
     document.getElementById('f-email').value = '';
     document.getElementById('f-telefone').value = '';
     document.getElementById('f-categoria').value = 'Standard';
-    document.getElementById('photo-input').value = '';
-    document.getElementById('photo-preview-wrap').innerHTML = '📷 Clique para selecionar uma foto';
+    const now = new Date();
+    const next = new Date(now.getFullYear() + 1, now.getMonth());
+    document.getElementById('f-validade-mes').value = String(next.getMonth() + 1).padStart(2, '0');
+    document.getElementById('f-validade-ano').value = String(next.getFullYear());
     document.getElementById('modal').style.display = 'flex';
 }
 
@@ -130,13 +140,16 @@ function openEdit(id) {
     document.getElementById('save-btn-text').textContent = 'Atualizar';
     document.getElementById('edit-id').value = m.id;
     document.getElementById('f-nome').value = m.nome;
-    document.getElementById('f-cpf').value = m.cpf || '';
     document.getElementById('f-email').value = m.email || '';
     document.getElementById('f-telefone').value = m.telefone || '';
     document.getElementById('f-categoria').value = m.categoria;
-    document.getElementById('photo-preview-wrap').innerHTML = m.photo
-        ? `<img src="${m.photo}" class="photo-preview" alt="Foto">`
-        : '📷 Clique para trocar a foto';
+    if (m.validade) {
+        const parts = m.validade.split('/');
+        if (parts.length === 2) {
+            document.getElementById('f-validade-mes').value = parts[0];
+            document.getElementById('f-validade-ano').value = parts[1];
+        }
+    }
     document.getElementById('modal').style.display = 'flex';
 }
 
@@ -153,20 +166,26 @@ async function saveMember() {
     const categoria = document.getElementById('f-categoria').value;
     if (!nome) { showToast('O nome é obrigatório'); return; }
 
-    const fd = new FormData();
-    fd.append('nome', nome);
-    fd.append('cpf', document.getElementById('f-cpf').value.trim());
-    fd.append('email', document.getElementById('f-email').value.trim());
-    fd.append('telefone', document.getElementById('f-telefone').value.trim());
-    fd.append('categoria', categoria);
+    const mes = document.getElementById('f-validade-mes').value;
+    const ano = document.getElementById('f-validade-ano').value;
+    const validade = `${mes}/${ano}`;
 
-    const photoFile = document.getElementById('photo-input').files[0];
-    if (photoFile) fd.append('photo', photoFile);
+    const body = {
+        nome,
+        email: document.getElementById('f-email').value.trim(),
+        telefone: document.getElementById('f-telefone').value.trim(),
+        categoria,
+        validade
+    };
 
     try {
         const url = editingId ? `/api/members/${editingId}` : '/api/members';
         const method = editingId ? 'PUT' : 'POST';
-        const res = await fetch(url, { method, body: fd });
+        const res = await fetch(url, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
         if (!res.ok) throw new Error();
 
         showToast(editingId ? 'Filiado atualizado com sucesso!' : 'Filiado cadastrado com sucesso!');
@@ -215,30 +234,10 @@ function sendWhatsApp(cardUrl, nome, telefone) {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────
-function formatDate(iso) {
-    if (!iso) return '–';
-    const d = new Date(iso);
-    return d.toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' });
+function formatDate(val) {
+    return val || '–';
 }
 
-function maskCPF(input) {
-    let v = input.value.replace(/\D/g, '').slice(0, 11);
-    v = v.replace(/(\d{3})(\d)/, '$1.$2')
-        .replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4');
-    input.value = v;
-}
-
-function previewPhoto(input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-        document.getElementById('photo-preview-wrap').innerHTML =
-            `<img src="${e.target.result}" class="photo-preview" alt="Preview">`;
-    };
-    reader.readAsDataURL(file);
-}
 
 function showToast(msg) {
     const t = document.createElement('div');
@@ -250,4 +249,5 @@ function showToast(msg) {
 function showSection(s) { /* reserved for future sections */ }
 
 // ── Init ──────────────────────────────────────────────────────────
+populateYears();
 loadMembers();

@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 const path = require('path');
@@ -13,20 +12,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-
-// ─── Storage para fotos dos filiados ─────────────────────────────────────────
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = path.join(__dirname, 'public', 'uploads');
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
-  }
-});
-const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 // ─── Banco de dados simples (JSON) ────────────────────────────────────────────
 const DB_PATH = path.join(__dirname, 'data', 'members.json');
@@ -56,9 +41,9 @@ app.get('/api/members/:id', (req, res) => {
 });
 
 // Cadastrar novo filiado
-app.post('/api/members', upload.single('photo'), async (req, res) => {
+app.post('/api/members', async (req, res) => {
   try {
-    const { nome, email, telefone, categoria, cpf } = req.body;
+    const { nome, email, telefone, categoria, validade } = req.body;
     if (!nome || !categoria) {
       return res.status(400).json({ error: 'Nome e categoria são obrigatórios' });
     }
@@ -75,11 +60,9 @@ app.post('/api/members', upload.single('photo'), async (req, res) => {
       nome,
       email: email || '',
       telefone: telefone || '',
-      cpf: cpf || '',
       categoria,
-      photo: req.file ? `/uploads/${req.file.filename}` : null,
+      validade: validade || '',
       dataFiliacao: new Date().toISOString(),
-      validade: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
       ativo: true,
       qrCode,
       cardUrl
@@ -96,22 +79,21 @@ app.post('/api/members', upload.single('photo'), async (req, res) => {
 });
 
 // Atualizar filiado
-app.put('/api/members/:id', upload.single('photo'), async (req, res) => {
+app.put('/api/members/:id', async (req, res) => {
   try {
     const members = loadMembers();
     const idx = members.findIndex(m => m.id === req.params.id);
     if (idx === -1) return res.status(404).json({ error: 'Filiado não encontrado' });
 
-    const { nome, email, telefone, categoria, cpf, ativo } = req.body;
+    const { nome, email, telefone, categoria, validade, ativo } = req.body;
     const member = members[idx];
 
     if (nome) member.nome = nome;
     if (email !== undefined) member.email = email;
     if (telefone !== undefined) member.telefone = telefone;
     if (categoria) member.categoria = categoria;
-    if (cpf !== undefined) member.cpf = cpf;
-    if (ativo !== undefined) member.ativo = ativo === 'true';
-    if (req.file) member.photo = `/uploads/${req.file.filename}`;
+    if (validade !== undefined) member.validade = validade;
+    if (ativo !== undefined) member.ativo = ativo === 'true' || ativo === true;
 
     saveMembers(members);
     res.json(member);

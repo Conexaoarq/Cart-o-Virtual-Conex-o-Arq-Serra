@@ -1,91 +1,88 @@
 /* ══════════════════════════════════════════════════════════════
-   CONEXÃO ARQ SERRA – Card CSS
+   CONEXÃO ARQ SERRA – Card CSS (Redesign Arquitetural)
    ══════════════════════════════════════════════════════════════ */
 
 :root {
   --gold:       #B8906A;
-  --gold-light: #D4B08A;
+  --gold-light: #D4B896;
   --gold-dark:  #8A6845;
-  --cream:      #F5E6D3;
-  --dark:       #1A1008;
-  --dark-mid:   #2C1D0E;
-  --card-w:     340px;
-  --card-h:     210px;
-  --radius:     16px;
+  --cream:      #F2E8DA;
+  --dark:       #1A1714;
+  --dark-mid:   #252018;
+  --dark-warm:  #2E2820;
+  --card-w:     360px;
+  --card-h:     216px;
+  --radius:     12px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Inter', sans-serif; }
 
-html, body {
-  height: 100%;
-  font-family: 'Inter', sans-serif;
-}
-
-/* ── Backgrounds ──────────────────────────────────────────────── */
+/* ── Body ─────────────────────────────────────────────────────── */
 .card-body {
   min-height: 100vh;
-  background: linear-gradient(150deg, #1A1008 0%, #2C1D0E 40%, #1A1008 100%);
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(184,144,106,0.06) 0%, transparent 60%),
+    linear-gradient(160deg, #1A1714 0%, #252018 50%, #1A1714 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0;
   overflow-x: hidden;
 }
 
-/* ── Loading / Error ──────────────────────────────────────────── */
-.loading-screen, .error-screen {
+/* ── Loading ──────────────────────────────────────────────────── */
+.loading-screen {
   position: fixed; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  color: var(--cream); gap: 16px;
-  background: linear-gradient(150deg, #1A1008, #2C1D0E);
+  display: flex; align-items: center; justify-content: center;
+  background: #1A1714;
 }
 .spinner {
-  width: 48px; height: 48px;
-  border: 3px solid rgba(184,144,106,0.2);
+  width: 36px; height: 36px;
+  border: 2px solid rgba(184,144,106,0.15);
   border-top-color: var(--gold);
   border-radius: 50%;
-  animation: spin 0.9s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.error-icon { font-size: 48px; }
-.error-screen h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; }
-.error-screen p  { color: var(--gold-light); font-size: 0.9rem; }
+
+/* ── Error ────────────────────────────────────────────────────── */
+.error-screen {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 12px;
+  background: #1A1714; color: var(--cream); text-align: center; padding: 24px;
+}
+.error-icon { font-size: 40px; }
+.error-screen h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 400; }
+.error-screen p  { color: var(--gold-light); font-size: 0.85rem; max-width: 260px; }
 
 /* ── Install Banner ───────────────────────────────────────────── */
 .install-banner {
-  width: 100%; max-width: 420px;
+  width: 100%; max-width: 440px;
   background: linear-gradient(90deg, var(--gold-dark), var(--gold));
-  color: #fff; padding: 10px 16px;
+  color: #fff; padding: 9px 16px;
   display: flex; align-items: center; gap: 10px;
-  font-size: 0.8rem; font-weight: 500;
-  border-radius: 0 0 12px 12px;
-  margin-bottom: 8px;
+  font-size: 0.78rem; font-weight: 500;
+  border-radius: 0 0 10px 10px; margin-bottom: 4px;
 }
 .install-banner span { flex: 1; }
 .install-btn-cta {
-  background: #fff; color: var(--gold-dark);
-  border: none; border-radius: 6px;
-  padding: 5px 12px; font-size: 0.78rem;
-  font-weight: 600; cursor: pointer;
+  background: rgba(255,255,255,0.95); color: var(--gold-dark);
+  border: none; border-radius: 5px;
+  padding: 4px 12px; font-size: 0.75rem; font-weight: 600; cursor: pointer;
 }
-.install-close {
-  background: none; border: none;
-  color: rgba(255,255,255,0.7);
-  font-size: 1rem; cursor: pointer; line-height: 1;
-}
+.install-close { background: none; border: none; color: rgba(255,255,255,0.6); font-size: 0.95rem; cursor: pointer; }
 
-/* ── Container ────────────────────────────────────────────────── */
+/* ── Card Container ───────────────────────────────────────────── */
 .card-container {
-  width: 100%; max-width: 420px;
+  width: 100%; max-width: 440px;
   display: flex; flex-direction: column;
-  align-items: center; padding-top: 32px;
-  gap: 20px;
+  align-items: center; padding-top: 40px; gap: 20px;
 }
 
-/* ── Card Wrapper (3D flip) ───────────────────────────────────── */
-.card-wrapper {
-  perspective: 1200px;
+/* ── 3D Scene ────────────────────────────────────────────────── */
+.scene {
+  perspective: 1400px;
   width: var(--card-w);
   height: var(--card-h);
 }
@@ -94,10 +91,12 @@ html, body {
   width: 100%; height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  filter: drop-shadow(0 20px 60px rgba(0,0,0,0.8));
+  filter: drop-shadow(0 24px 56px rgba(0,0,0,0.7))
+          drop-shadow(0 4px 12px rgba(0,0,0,0.5));
 }
+.card:hover { filter: drop-shadow(0 30px 70px rgba(0,0,0,0.8)) drop-shadow(0 4px 16px rgba(184,144,106,0.15)); }
 .card.flipped { transform: rotateY(180deg); }
 
 .card-face {
@@ -108,265 +107,192 @@ html, body {
 }
 .card-back { transform: rotateY(180deg); }
 
-/* ── Card Background & Gradient ──────────────────────────────── */
-.card-front {
-  background: linear-gradient(135deg,
-    #1e1208 0%,
-    #3a2410 30%,
-    #2a1c0c 60%,
-    #1e1208 100%
-  );
-  border: 1px solid rgba(184,144,106,0.25);
-}
-.card-back {
-  background: linear-gradient(135deg,
-    #2a1c0c 0%,
-    #1e1208 50%,
-    #3a2410 100%
-  );
-  border: 1px solid rgba(184,144,106,0.25);
+/* ── Card Background ─────────────────────────────────────────── */
+.card-front, .card-back {
+  background:
+    linear-gradient(135deg, #262017 0%, #1E1A12 40%, #2A2419 70%, #1E1A12 100%);
+  border: 1px solid rgba(184,144,106,0.18);
 }
 
-.card-bg-texture {
+/* Brilho sutil no topo */
+.card-front::before, .card-back::before {
+  content: '';
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 80% 20%, rgba(184,144,106,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 20% 80%, rgba(184,144,106,0.06) 0%, transparent 50%);
-  pointer-events: none;
+    radial-gradient(ellipse at 70% 0%, rgba(184,144,106,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 100%, rgba(184,144,106,0.04) 0%, transparent 50%);
+  pointer-events: none; z-index: 0;
 }
 
-/* ── Card Front ───────────────────────────────────────────────── */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 14px 16px 0;
-  position: relative; z-index: 1;
-}
+/* ── Linhas arquiteturais decorativas ────────────────────────── */
+.arch-lines { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
 
-.logo-area {
-  display: flex; align-items: center; gap: 8px;
-}
-.logo-circle { flex-shrink: 0; }
-.logo-text {
-  display: flex; flex-direction: column; line-height: 1;
-}
-.logo-conexao {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.6rem; font-weight: 500;
-  letter-spacing: 0.18em;
-  color: var(--cream); opacity: 0.8;
-}
-.logo-arq {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem; font-weight: 300;
-  color: var(--cream);
-}
-.logo-arq em { font-size: 0.55rem; font-style: normal; letter-spacing: 0.1em; vertical-align: middle; }
-
-.card-badge {
-  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-  color: var(--dark); font-size: 0.55rem;
-  font-weight: 700; letter-spacing: 0.15em;
-  padding: 3px 8px; border-radius: 4px;
-  font-family: 'Inter', sans-serif;
-}
-
-/* ── Photo area ──────────────────────────────────────────────── */
-.card-photo-area {
+.arch-line {
   position: absolute;
-  right: 16px; top: 44px;
+  background: rgba(184,144,106,0.07);
+}
+.arch-line-h1 { left: 0; right: 0; top: 72px; height: 1px; }
+.arch-line-h2 { left: 0; right: 0; bottom: 46px; height: 1px; }
+.arch-line-v1 { top: 0; bottom: 0; left: 100px; width: 1px; }
+
+/* ── FRENTE – Top area ──────────────────────────────────────── */
+.front-top {
+  position: absolute; top: 0; left: 0; right: 0; height: 72px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 18px; z-index: 1;
+}
+
+.front-logo {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.front-club-name {
+  display: flex; flex-direction: column; gap: 0;
+}
+.front-club-top {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.52rem; font-weight: 500;
+  letter-spacing: 0.22em; color: var(--gold-light); opacity: 0.9;
+  line-height: 1;
+}
+.front-club-bottom {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 300;
+  color: var(--cream); line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+.front-club-bottom em {
+  font-size: 0.52rem; font-style: normal;
+  letter-spacing: 0.15em; vertical-align: middle;
+  color: var(--gold-light);
+}
+
+/* Linha divisória dourada */
+.front-divider {
+  position: absolute; left: 18px; right: 18px; top: 72px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
   z-index: 1;
 }
-.photo-frame {
-  width: 64px; height: 78px;
-  border-radius: 8px;
-  border: 2px solid var(--gold);
-  overflow: hidden;
-  background: rgba(184,144,106,0.1);
-  position: relative;
-}
-.member-photo {
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center top;
-}
-.photo-placeholder {
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; height: 100%;
-  font-size: 2rem; color: var(--gold);
-  opacity: 0.5;
+
+/* ── FRENTE – Bottom area ───────────────────────────────────── */
+.front-bottom {
+  position: absolute;
+  left: 18px; right: 18px;
+  top: 90px; bottom: 36px;
+  display: flex; flex-direction: column;
+  justify-content: center; gap: 8px;
+  z-index: 1;
 }
 
-/* ── Card chip ──────────────────────────────────────────────── */
-.card-chip {
-  position: absolute; left: 16px; top: 52px;
-  width: 34px; height: 26px;
-  background: linear-gradient(135deg, #d4b483, #a07840);
-  border-radius: 5px; z-index: 1;
-  overflow: hidden;
-}
-.chip-inner {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 70%; height: 70%;
-  border: 1.5px solid rgba(0,0,0,0.3);
-  border-radius: 3px;
-}
-.chip-inner::before, .chip-inner::after {
-  content: '';
-  position: absolute;
-  background: rgba(0,0,0,0.2);
-}
-.chip-inner::before {
-  left: 50%; top: 0; bottom: 0;
-  width: 1px; transform: translateX(-50%);
-}
-.chip-inner::after {
-  top: 50%; left: 0; right: 0;
-  height: 1px; transform: translateY(-50%);
+.front-label {
+  font-size: 0.46rem; letter-spacing: 0.2em;
+  color: var(--gold); font-weight: 500; font-family: 'Inter', sans-serif;
 }
 
-/* ── Member Info ──────────────────────────────────────────────── */
-.card-info {
-  position: absolute;
-  left: 16px; bottom: 28px;
-  right: 90px; z-index: 1;
-}
-.member-name-label {
-  font-size: 0.48rem; letter-spacing: 0.15em;
-  color: var(--gold); font-weight: 500;
-  margin-bottom: 2px;
-}
-.member-name {
+.front-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.2rem; font-weight: 400;
-  color: var(--cream); line-height: 1.15;
-  white-space: nowrap; overflow: hidden;
-  text-overflow: ellipsis; max-width: 180px;
+  font-size: 1.55rem; font-weight: 400;
+  color: var(--cream); line-height: 1.1;
+  letter-spacing: 0.01em;
+  /* Truncate long names */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.member-details {
-  display: flex; align-items: center; gap: 6px;
-  margin-top: 6px;
+
+.front-meta {
+  display: flex; align-items: center; gap: 10px;
 }
-.detail-item {
+.front-meta-item {
   display: flex; flex-direction: column; gap: 1px;
 }
-.detail-label {
-  font-size: 0.45rem; letter-spacing: 0.12em;
-  color: var(--gold-light); font-weight: 500;
+.front-meta-label {
+  font-size: 0.42rem; letter-spacing: 0.14em;
+  color: var(--gold-light); opacity: 0.7; font-weight: 500;
 }
-.detail-value {
-  font-size: 0.7rem; font-weight: 500;
-  color: var(--cream); letter-spacing: 0.04em;
-}
-.detail-sep { color: var(--gold); opacity: 0.4; font-size: 0.8rem; }
-
-/* ── Flip hint ──────────────────────────────────────────────── */
-.flip-hint {
-  position: absolute; bottom: 8px; right: 14px;
-  font-size: 0.52rem; color: var(--gold);
-  opacity: 0.6; letter-spacing: 0.05em;
-  cursor: pointer; z-index: 2;
-  transition: opacity 0.2s;
-}
-.flip-hint:hover { opacity: 1; }
-
-/* ── Card Back ─────────────────────────────────────────────── */
-.back-header {
-  display: flex; align-items: center; gap: 8px;
-  padding: 12px 16px 0; position: relative; z-index: 1;
-}
-.back-title {
+.front-meta-value {
+  font-size: 0.7rem; font-weight: 400;
+  color: var(--cream); letter-spacing: 0.05em;
   font-family: 'Inter', sans-serif;
-  font-size: 0.55rem; letter-spacing: 0.18em;
-  color: var(--gold-light); font-weight: 500;
+}
+.front-meta-sep {
+  color: var(--gold); opacity: 0.35; font-size: 1rem; align-self: flex-end; margin-bottom: 2px;
 }
 
-.qr-section {
+/* ── VERSO ──────────────────────────────────────────────────── */
+.back-center {
+  position: absolute; inset: 0;
   display: flex; flex-direction: column;
-  align-items: center; gap: 6px;
-  position: relative; z-index: 1;
-  padding-top: 6px;
-}
-.qr-label {
-  font-size: 0.55rem; color: var(--gold-light);
-  letter-spacing: 0.08em; text-transform: uppercase;
-}
-.qr-frame {
-  background: white; border-radius: 8px;
-  padding: 6px;
-  border: 2px solid var(--gold);
-}
-.qr-img { width: 80px; height: 80px; display: block; }
-.qr-sub {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.9rem; color: var(--cream);
-}
-.qr-num {
-  font-size: 0.6rem; color: var(--gold);
-  letter-spacing: 0.08em;
+  align-items: center; justify-content: center;
+  gap: 10px; z-index: 1;
 }
 
-.back-footer {
-  position: absolute; bottom: 20px; left: 0; right: 0;
-  text-align: center; z-index: 1;
-  padding: 0 16px;
-}
-.back-footer p {
-  font-size: 0.48rem; color: rgba(245,230,211,0.45);
-  letter-spacing: 0.08em; line-height: 1.6;
+.back-logo {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.92;
 }
 
-/* ── Status Badge ─────────────────────────────────────────────── */
+.back-tagline {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.52rem; letter-spacing: 0.22em;
+  color: var(--gold-light); font-weight: 400; opacity: 0.6;
+}
+
+/* ── Flip hint ───────────────────────────────────────────────── */
+.flip-hint {
+  position: absolute; bottom: 10px; right: 14px;
+  font-size: 0.5rem; color: var(--gold); opacity: 0.5;
+  letter-spacing: 0.06em; cursor: pointer; z-index: 2;
+  transition: opacity 0.2s; font-family: 'Inter', sans-serif;
+}
+.flip-hint:hover { opacity: 0.9; }
+
+/* ── Status badge ────────────────────────────────────────────── */
 .status-container { display: flex; justify-content: center; }
 .status-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(184,144,106,0.1);
-  border: 1px solid rgba(184,144,106,0.25);
-  border-radius: 20px;
-  padding: 5px 14px; font-size: 0.7rem;
-  letter-spacing: 0.12em; color: var(--cream);
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(184,144,106,0.08);
+  border: 1px solid rgba(184,144,106,0.2);
+  border-radius: 20px; padding: 5px 16px;
+  font-size: 0.65rem; letter-spacing: 0.14em;
+  color: var(--cream); font-family: 'Inter', sans-serif;
 }
 .status-dot {
-  width: 7px; height: 7px; border-radius: 50%;
+  width: 6px; height: 6px; border-radius: 50%;
   background: #4ade80;
-  box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+  box-shadow: 0 0 8px rgba(74,222,128,0.6);
   animation: pulse-dot 2s ease-in-out infinite;
 }
-.status-badge.inactive .status-dot { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.6); animation: none; }
+.status-badge.inactive .status-dot {
+  background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); animation: none;
+}
 @keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 8px rgba(74,222,128,0.6); }
-  50% { box-shadow: 0 0 14px rgba(74,222,128,0.9); }
+  0%,100% { box-shadow: 0 0 6px rgba(74,222,128,0.5); }
+  50%      { box-shadow: 0 0 12px rgba(74,222,128,0.85); }
 }
 
-/* ── Actions ──────────────────────────────────────────────────── */
-.card-actions {
-  display: flex; gap: 12px;
-}
+/* ── Actions ─────────────────────────────────────────────────── */
+.card-actions { display: flex; justify-content: center; }
 .action-btn {
   display: flex; align-items: center; gap: 8px;
-  background: rgba(184,144,106,0.1);
-  border: 1px solid rgba(184,144,106,0.3);
-  color: var(--gold-light);
-  border-radius: 10px; padding: 10px 20px;
-  font-size: 0.82rem; font-weight: 500;
+  background: rgba(184,144,106,0.08);
+  border: 1px solid rgba(184,144,106,0.22);
+  color: var(--gold-light); border-radius: 8px;
+  padding: 10px 22px; font-size: 0.8rem; font-weight: 400;
   cursor: pointer; transition: all 0.2s;
-  font-family: 'Inter', sans-serif;
-  letter-spacing: 0.03em;
+  font-family: 'Inter', sans-serif; letter-spacing: 0.04em;
 }
-.action-btn:hover { background: rgba(184,144,106,0.2); border-color: var(--gold); color: var(--cream); }
+.action-btn:hover {
+  background: rgba(184,144,106,0.16);
+  border-color: var(--gold); color: var(--cream);
+}
 
 /* ── Footer ──────────────────────────────────────────────────── */
 .footer-note {
-  font-size: 0.65rem; color: rgba(245,230,211,0.2);
-  letter-spacing: 0.1em; text-align: center;
-  padding-bottom: 32px;
-}
-
-/* ── Admin body  ─────────────────────────────────────────────── */
-.admin-body {
-  min-height: 100vh;
-  background: #f4f1ee;
-  font-family: 'Inter', sans-serif;
-  color: #2C1D0E;
+  font-size: 0.6rem; color: rgba(242,232,218,0.2);
+  letter-spacing: 0.1em; text-align: center; padding-bottom: 32px;
 }
