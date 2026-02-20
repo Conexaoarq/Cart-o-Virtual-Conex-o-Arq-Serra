@@ -66,13 +66,13 @@ function renderTable(members) {
               <circle cx="12" cy="12" r="3"/>
             </svg>
           </button>
-          <button class="btn-icon" title="Copiar link" onclick="copyLink('${m.cardUrl}')">
+          <button class="btn-icon" title="Copiar link" onclick="copyLink('${m.id}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
             </svg>
           </button>
-          <button class="btn-icon whatsapp" title="Enviar por WhatsApp" onclick="sendWhatsApp('${m.cardUrl}', '${m.nome}', '${m.telefone || ''}')" style="color:#25D366;border-color:#dcfce7">
+          <button class="btn-icon whatsapp" title="Enviar por WhatsApp" onclick="sendWhatsApp('${m.id}', '${m.nome}', '${m.telefone || ''}')" style="color:#25D366;border-color:#dcfce7">
             <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
               <path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.555 4.112 1.523 5.84L.057 23.943l6.26-1.442A11.935 11.935 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.894a9.867 9.867 0 0 1-5.031-1.378l-.36-.214-3.733.86.922-3.574-.235-.372A9.867 9.867 0 0 1 2.106 12C2.106 6.54 6.54 2.106 12 2.106S21.894 6.54 21.894 12 17.46 21.894 12 21.894z"/>
@@ -212,7 +212,8 @@ async function deleteMember(id) {
 // ── Actions ────────────────────────────────────────────────────────
 function viewCard(id) { window.open(`/card.html?id=${id}`, '_blank'); }
 
-async function copyLink(url) {
+async function copyLink(id) {
+    const url = `${location.origin}/card.html?id=${id}`;
     try {
         await navigator.clipboard.writeText(url);
         showToast('Link do cartão copiado!');
@@ -221,7 +222,8 @@ async function copyLink(url) {
     }
 }
 
-function sendWhatsApp(cardUrl, nome, telefone) {
+function sendWhatsApp(id, nome, telefone) {
+    const cardUrl = `${location.origin}/card.html?id=${id}`;
     const msg = encodeURIComponent(
         `Olá, ${nome}! 🎉\n\nSeu cartão de filiado da *Conexão Arq Serra* está pronto.\n\nAcesse o link abaixo e adicione à tela inicial do seu celular para ter sempre à mão:\n\n${cardUrl}\n\n_Este cartão funciona offline após o primeiro acesso._`
     );
