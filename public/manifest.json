@@ -1,0 +1,24 @@
+{
+    "name": "Conexão Arq Serra",
+    "short_name": "Conexão Arq",
+    "description": "Cartão de identificação de filiado - Conexão Arq Serra",
+    "start_url": "/card.html",
+    "display": "standalone",
+    "background_color": "#1a1008",
+    "theme_color": "#B8906A",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
