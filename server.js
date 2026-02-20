@@ -7,6 +7,7 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set('trust proxy', 1); // Necessário para Railway/Heroku detectar HTTPS corretamente
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 app.use(cors());
@@ -23,6 +24,8 @@ function loadMembers() {
 }
 
 function saveMembers(members) {
+  const dir = path.dirname(DB_PATH);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(DB_PATH, JSON.stringify(members, null, 2));
 }
 
