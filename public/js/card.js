@@ -25,9 +25,15 @@ document.getElementById('install-close')?.addEventListener('click', () => {
 // ── Load card data ────────────────────────────────────────────────
 async function loadCard() {
     const params = new URLSearchParams(location.search);
-    const id = params.get('id');
+    let id = params.get('id');
 
+    // PWA aberto pelo ícone (sem ?id=): redireciona para o último cartão visualizado
     if (!id) {
+        const lastId = localStorage.getItem('card_last_id');
+        if (lastId) {
+            location.replace(`/card.html?id=${lastId}`);
+            return;
+        }
         showError();
         return;
     }
@@ -36,11 +42,14 @@ async function loadCard() {
         const res = await fetch(`/api/members/${id}`);
         if (!res.ok) throw new Error('not_found');
         const member = await res.json();
-        // Cache for offline
-        try { localStorage.setItem(`member_${id}`, JSON.stringify(member)); } catch {}
+        // Cache para offline + salva último ID visualizado (para ícone PWA)
+        try {
+            localStorage.setItem(`member_${id}`, JSON.stringify(member));
+            localStorage.setItem('card_last_id', id);
+        } catch {}
         fillCard(member);
     } catch (err) {
-        // Try cache
+        // Tenta cache offline
         const cached = localStorage.getItem(`member_${id}`);
         if (cached) {
             const member = JSON.parse(cached);
