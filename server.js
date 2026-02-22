@@ -36,24 +36,48 @@ async function initDB() {
 }
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
+function basicAuth(req, res, next) {
+  const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+  const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+
+  if (login === 'administrador' && password === 'conexao2026') {
+    return next();
+  }
+
+  res.set('WWW-Authenticate', 'Basic realm="Acesso Restrito ao Painel Admin"');
+  res.status(401).send('Acesso Negado. Credenciais invalidas.');
+}
+
 app.use(cors());
 app.use(express.json());
+
+// Proteger a página do painel admin
+app.use('/admin.html', basicAuth);
+
+// Proteger rotas de modificação na API de membros
+app.use('/api/members', (req, res, next) => {
+  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE') {
+    return basicAuth(req, res, next);
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── Helper: converte linha do banco para objeto da API ───────────────────────
 function rowToMember(row) {
   return {
-    id:              row.id,
-    numeroFiliacao:  row.numero_filiacao,
-    nome:            row.nome,
-    email:           row.email,
-    telefone:        row.telefone,
-    categoria:       row.categoria,
-    validade:        row.validade,
-    dataFiliacao:    row.data_filiacao,
-    ativo:           row.ativo,
-    qrCode:          row.qr_code,
-    cardUrl:         row.card_url,
+    id: row.id,
+    numeroFiliacao: row.numero_filiacao,
+    nome: row.nome,
+    email: row.email,
+    telefone: row.telefone,
+    categoria: row.categoria,
+    validade: row.validade,
+    dataFiliacao: row.data_filiacao,
+    ativo: row.ativo,
+    qrCode: row.qr_code,
+    cardUrl: row.card_url,
   };
 }
 
@@ -117,12 +141,12 @@ app.put('/api/members/:id', async (req, res) => {
     const values = [];
     let i = 1;
 
-    if (nome)                   { fields.push(`nome = $${i++}`);       values.push(nome); }
-    if (email !== undefined)    { fields.push(`email = $${i++}`);      values.push(email); }
-    if (telefone !== undefined) { fields.push(`telefone = $${i++}`);   values.push(telefone); }
-    if (categoria)              { fields.push(`categoria = $${i++}`);  values.push(categoria); }
-    if (validade !== undefined) { fields.push(`validade = $${i++}`);   values.push(validade); }
-    if (ativo !== undefined)    { fields.push(`ativo = $${i++}`);      values.push(ativo === 'true' || ativo === true); }
+    if (nome) { fields.push(`nome = $${i++}`); values.push(nome); }
+    if (email !== undefined) { fields.push(`email = $${i++}`); values.push(email); }
+    if (telefone !== undefined) { fields.push(`telefone = $${i++}`); values.push(telefone); }
+    if (categoria) { fields.push(`categoria = $${i++}`); values.push(categoria); }
+    if (validade !== undefined) { fields.push(`validade = $${i++}`); values.push(validade); }
+    if (ativo !== undefined) { fields.push(`ativo = $${i++}`); values.push(ativo === 'true' || ativo === true); }
 
     if (!fields.length) return res.status(400).json({ error: 'Nenhum campo para atualizar' });
 
